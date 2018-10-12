@@ -1,0 +1,15 @@
+@font-face {
+  font-family: IR;
+  src: url("./font/IRANSansWebFa.38d4b5f.woff2") format("woff2");
+}
+body {
+  font-family: IR;
+  direction: rtl;
+}
+.menuLink {
+  text-decoration: none;
+  color: #fff;
+}
+.menuLink:hover {
+  text-decoration: none;
+}
