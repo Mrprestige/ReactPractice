@@ -6,6 +6,8 @@ import TextField from "@material-ui/core/TextField";
 import classNames from "classnames";
 import Button from "@material-ui/core/Button";
 import { Consumer } from "../../context";
+import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import InputTextGroup from "../layout/InputTextGroup";
 import uuid from "uuid";
 
 const styles = theme => ({
@@ -29,15 +31,26 @@ const styles = theme => ({
 });
 
 class AddContact extends Component {
-  state = {
-    name: "",
-    email: "",
-    phone: ""
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      formData: {
+        name: "",
+        email: "",
+        phone: ""
+      },
+      submitted: false
+    };
+
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
   onChange = e =>
     this.setState({
       [e.target.name]: e.target.value
     });
+
   onSubmit = (dispatch, e) => {
     e.preventDefault();
     const { name, email, phone } = this.state;
@@ -48,11 +61,14 @@ class AddContact extends Component {
       phone
     };
     dispatch({ type: "ADD_CONTACT", payload: newContact });
-    this.setState({ name: "", email: "", phone: "" });
+    this.setState({ name: "", email: "", phone: "", submitted: true }, () => {
+      setTimeout(() => this.setState({ submitted: false }), 5000);
+    });
   };
+  
   render() {
     const { classes } = this.props;
-    const { name, phone, email } = this.state;
+    const { name, phone, email,submitted } = this.state;
     return (
       <Consumer>
         {value => {
@@ -63,11 +79,11 @@ class AddContact extends Component {
                 <Grid container justify={"center"} item xs={12}>
                   <Grid item xs={6}>
                     <Paper className={classes.paper}>
-                      <form
+                      <ValidatorForm
                         action=""
                         onSubmit={this.onSubmit.bind(this, dispatch)}
                       >
-                        <TextField
+                        <TextValidator
                           id="standard-dense"
                           label="Name"
                           name="name"
@@ -75,24 +91,36 @@ class AddContact extends Component {
                           margin="dense"
                           value={name}
                           onChange={this.onChange}
+                          placeholder="Enter name"
+                          validators={["required"]}
+                          errorMessages={["this field is required"]}
                         />
-                        <TextField
+                        <TextValidator
                           id="standard-dense"
-                          label="E-mail"
+                          label="Email"
                           name="email"
                           className={classNames(classes.textField)}
                           margin="dense"
                           value={email}
                           onChange={this.onChange}
+                          placeholder="Enter Your Email"
+                          validators={["required", "isEmail"]}
+                          errorMessages={[
+                            "this field is required",
+                            "email is not valid"
+                          ]}
                         />
-                        <TextField
+                        <TextValidator
                           id="standard-dense"
-                          label="phone"
+                          label="Phone"
+                          name="phone"
                           className={classNames(classes.textField)}
                           margin="dense"
                           value={phone}
-                          name="phone"
                           onChange={this.onChange}
+                          placeholder="Enter your phone number"
+                          validators={["required"]}
+                          errorMessages={["this field is required"]}
                         />
                         <Grid container justify={"center"} item xs={12}>
                           <Button
@@ -100,11 +128,12 @@ class AddContact extends Component {
                             variant="outlined"
                             color="primary"
                             className={classes.BTN}
+                            disabled={submitted}
                           >
-                            جدید
+                            {"جدید"}
                           </Button>
                         </Grid>
-                      </form>
+                      </ValidatorForm>
                     </Paper>
                   </Grid>
                 </Grid>

@@ -36,7 +36,6 @@ class Contact extends Component {
     showInfoContacts: false
   };
   CLoseHandler = (id, dispatch) => {
-    // dispatch({ type: "DELETE_CONTACT", payload: id });
     dispatch({ type: "DELETE_CONTACT", payload: id });
   };
   render() {
